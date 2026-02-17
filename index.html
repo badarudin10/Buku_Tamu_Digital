@@ -135,7 +135,7 @@
             // Kita mengambil data dari link CSV Google Sheets Akang agar realtime
             const CSV_URL = SCRIPT_URL.replace("exec", "pub?output=csv"); // Mencoba konversi otomatis jika dipublish
             // Atau lebih aman gunakan link CSV dari menu 'Publish to Web' Akang:
-            const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6l3-Y2C6G4M5fNfC2jTq_YVvKq6U7-nN8P7jU7/pub?output=csv"; // GANTI DENGAN LINK CSV PUBLISH AKANG
+            const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vREkTMX1LapWfal_3a1omUjv0oxJcDlHpqhq_ILKkWq_YqP4Et2wit5P3GoGX_eIaWhK8f7i53lXJjh/pub?output=csv" // GANTI DENGAN LINK CSV PUBLISH AKANG
 
             fetch(MANUAL_CSV)
             .then(res => res.text())
