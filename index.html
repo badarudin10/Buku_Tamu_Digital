@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guestbook | Biipsite.Art</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-md w-full glass p-8 rounded-[2rem] shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-white tracking-tighter uppercase italic">Biipsite<span class="text-green-500">.Art</span></h1>
+            <p class="text-gray-400 text-xs font-bold mt-2 uppercase tracking-widest">Digital Guestbook System</p>
+        </div>
+
+        <form id="guestForm" class="space-y-4">
+            <div>
+                <label class="text-[10px] font-black text-gray-500 uppercase ml-2">Nama Lengkap</label>
+                <input type="text" name="nama" required placeholder="Contoh: Budi Santoso" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-white outline-none focus:border-green-500 transition">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-500 uppercase ml-2">Instansi / Perusahaan</label>
+                <input type="text" name="instansi" required placeholder="Nama Kantor Anda" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-white outline-none focus:border-green-500 transition">
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-500 uppercase ml-2">Tujuan Kunjungan</label>
+                <textarea name="tujuan" required placeholder="Keperluan apa hari ini?" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-white outline-none focus:border-green-500 transition h-24"></textarea>
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-500 uppercase ml-2">Nomor WhatsApp</label>
+                <input type="number" name="whatsapp" required placeholder="0812xxxx" class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-white outline-none focus:border-green-500 transition">
+            </div>
+
+            <button type="submit" id="btnSubmit" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-4 rounded-2xl shadow-lg shadow-green-900/20 transition transform active:scale-95 uppercase text-xs tracking-widest">
+                Kirim Data Kunjungan
+            </button>
+        </form>
+
+        <div id="successMsg" class="hidden text-center py-10">
+            <div class="text-5xl mb-4">✅</div>
+            <h2 class="text-white font-bold text-xl">Terima Kasih!</h2>
+            <p class="text-gray-400 text-sm mt-2">Data kunjungan Anda telah tersimpan.</p>
+            <button onclick="location.reload()" class="mt-6 text-green-500 font-bold text-xs uppercase underline">Kembali ke Form</button>
+        </div>
+    </div>
+
+    <script>
+        //https://script.google.com/macros/s/AKfycbwdXa-aqPRlq0DXPxAQ6TclgtbWhb0xrooVxedfEpWFUqL4FnW3sCdHVHyZgLcGSyfbOg/exec;
+
+        const form = document.getElementById('guestForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const successMsg = document.getElementById('successMsg');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            btnSubmit.innerHTML = "Sedang Mengirim...";
+            btnSubmit.disabled = true;
+
+            const formData = new FormData(form);
+            const obj = {};
+            formData.forEach((value, key) => obj[key] = value);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(obj)
+            })
+            .then(res => {
+                form.classList.add('hidden');
+                successMsg.classList.remove('hidden');
+            })
+            .catch(error => {
+                alert('Waduh, ada masalah koneksi! Coba lagi ya, Kang.');
+                btnSubmit.innerHTML = "Kirim Data Kunjungan";
+                btnSubmit.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
