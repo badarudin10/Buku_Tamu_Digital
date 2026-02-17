@@ -132,36 +132,56 @@
         }
 
         function loadAdminData() {
-            // Kita mengambil data dari link CSV Google Sheets Akang agar realtime
-            const CSV_URL = SCRIPT_URL.replace("exec", "pub?output=csv"); // Mencoba konversi otomatis jika dipublish
-            // Atau lebih aman gunakan link CSV dari menu 'Publish to Web' Akang:
-            const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vREkTMX1LapWfal_3a1omUjv0oxJcDlHpqhq_ILKkWq_YqP4Et2wit5P3GoGX_eIaWhK8f7i53lXJjh/pub?output=csv" // GANTI DENGAN LINK CSV PUBLISH AKANG
+    const MANUAL_CSV = "LINK_CSV_PUBLISH_AKANG"; // Pastikan link CSV benar
 
-            fetch(MANUAL_CSV)
-            .then(res => res.text())
-            .then(data => {
-                const rows = data.split('\n').slice(1); // Hapus header
-                const tableBody = document.getElementById('adminTableBody');
-                tableBody.innerHTML = '';
+    fetch(MANUAL_CSV + '?cachebuster=' + new Date().getTime()) // Anti-cache
+    .then(res => res.text())
+    .then(data => {
+        const rows = data.split('\n').slice(1);
+        const tableBody = document.getElementById('adminTableBody');
+        tableBody.innerHTML = '';
 
-                rows.reverse().forEach(row => {
-                    const cols = row.split(',');
-                    if(cols.length >= 4) {
-                        tableBody.innerHTML += `
-                            <tr class="hover:bg-white/5 transition">
-                                <td class="p-5 text-gray-500 font-mono">${cols[0]}</td>
-                                <td class="p-5 font-bold">${cols[1]}</td>
-                                <td class="p-5 text-gray-400">${cols[2]}</td>
-                                <td class="p-5">${cols[3]}</td>
-                                <td class="p-5 text-green-500 font-bold">${cols[4]}</td>
-                            </tr>
-                        `;
-                    }
-                });
-            });
-        }
+        rows.reverse().forEach(row => {
+            const cols = row.split(',');
+            if(cols.length >= 5) {
+                const isDone = cols[5] && cols[5].trim() === "TERLAYANI";
+                
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-white/5 transition ${isDone ? 'opacity-40' : ''}">
+                        <td class="p-5 text-[10px] text-gray-500 font-mono">${cols[0]}</td>
+                        <td class="p-5 font-bold">${cols[1]}</td>
+                        <td class="p-5">${cols[3]}</td>
+                        <td class="p-5">
+                            <span class="px-2 py-1 rounded text-[9px] font-black ${isDone ? 'bg-gray-700 text-gray-400' : 'bg-green-900 text-green-400 animate-pulse'}">
+                                ${isDone ? 'SELESAI' : 'ANTRE'}
+                            </span>
+                        </td>
+                        <td class="p-5 text-right">
+                            ${!isDone ? `<button onclick="markDone('${cols[1]}', '${cols[0]}')" class="bg-green-600 hover:bg-green-500 text-white text-[9px] font-black px-3 py-2 rounded-lg transition">TANDAI SELESAI</button>` : '✅'}
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+    });
+}
 
-        function logout() {
+function markDone(nama, timestamp) {
+    if(!confirm("Tandai tamu ini sebagai 'Selesai Terlayani'?")) return;
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+            action: "updateStatus",
+            nama: nama,
+            timestamp: timestamp
+        })
+    }).then(() => {
+        alert("Status diperbarui! Mohon tunggu 1-2 menit agar sinkronisasi Google Sheets selesai.");
+        loadAdminData();
+    });
+}        function logout() {
             document.getElementById('adminDashboard').classList.add('hidden');
             document.getElementById('adminPass').value = '';
         }
