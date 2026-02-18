@@ -9,7 +9,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: #e2e8f0; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; padding: 20px; overflow-y: auto; }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
@@ -17,62 +16,39 @@
     <div id="guestSection" class="max-w-md w-full glass p-8 rounded-[2rem] shadow-2xl">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-extrabold text-white tracking-tighter uppercase italic">Biipsite<span class="text-green-500">.Art</span></h1>
-            <p class="text-gray-400 text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Digital Guestbook System</p>
+            <p class="text-gray-400 text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Digital Guestbook</p>
         </div>
 
         <form id="guestForm" class="space-y-4">
-            <input type="text" name="nama" required placeholder="Nama Lengkap" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500 transition">
-            <input type="text" name="instansi" required placeholder="Instansi / Perusahaan" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500 transition">
-            <textarea name="tujuan" required placeholder="Tujuan Kunjungan" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500 transition h-24"></textarea>
-            <input type="number" name="whatsapp" required placeholder="Nomor WhatsApp (Aktif)" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500 transition">
-
-            <button type="submit" id="btnSubmit" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-4 rounded-2xl shadow-lg transition transform active:scale-95 uppercase text-[10px] tracking-widest">
-                Kirim Data Kunjungan
-            </button>
+            <input type="text" id="nama" required placeholder="Nama Lengkap" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500">
+            <input type="text" id="instansi" required placeholder="Instansi" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500">
+            <textarea id="tujuan" required placeholder="Tujuan" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500 h-20"></textarea>
+            <input type="number" id="whatsapp" required placeholder="WhatsApp" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl p-4 text-sm text-white outline-none focus:border-green-500">
+            <button type="submit" id="btnSubmit" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-4 rounded-2xl uppercase text-[10px] tracking-widest transition">Kirim Data</button>
         </form>
-
         <div id="successMsg" class="hidden text-center py-10">
-            <div class="text-5xl mb-4 animate-bounce">✅</div>
-            <h2 class="text-white font-bold text-xl uppercase tracking-tighter">Terima Kasih!</h2>
-            <p class="text-gray-400 text-xs mt-2">Data Anda telah masuk ke sistem kami.</p>
-            <button onclick="location.reload()" class="mt-8 text-green-500 font-bold text-[10px] uppercase underline">Isi Kembali</button>
+            <h2 class="text-white font-bold text-xl uppercase">✅ Terkirim!</h2>
+            <button onclick="location.reload()" class="mt-4 text-green-500 text-[10px] uppercase underline">Kembali</button>
         </div>
     </div>
 
-    <button onclick="showLogin()" class="fixed bottom-4 right-4 text-slate-800 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest no-print">
-        Admin Panel
-    </button>
+    <button onclick="document.getElementById('adminModal').classList.toggle('hidden')" class="mt-10 text-slate-600 text-[10px] font-bold uppercase tracking-widest">Admin Panel</button>
 
-    <div id="loginModal" class="modal flex items-center justify-center">
-        <div class="max-w-xs w-full glass p-8 rounded-3xl text-center">
-            <h2 class="text-white font-black mb-6 uppercase italic">Admin Access</h2>
-            <input type="password" id="adminPass" placeholder="Masukkan Password" class="w-full bg-black border border-slate-700 rounded-xl p-3 text-sm text-center mb-4 outline-none focus:border-green-500 text-white">
-            <div class="flex gap-2">
-                <button onclick="closeModal('loginModal')" class="flex-1 text-gray-500 font-bold text-[10px] uppercase">Batal</button>
-                <button onclick="checkAuth()" class="flex-1 bg-white text-black font-black py-2 rounded-xl text-[10px] uppercase">Login</button>
+    <div id="adminModal" class="hidden fixed inset-0 bg-black/95 z-50 p-6 overflow-y-auto">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-black text-white uppercase italic">Guest <span class="text-green-500">List</span></h2>
+                <button onclick="loadAdminData()" class="bg-blue-600 text-[10px] px-4 py-2 rounded-lg font-bold">REFRESH DATA</button>
+                <button onclick="document.getElementById('adminModal').classList.add('hidden')" class="text-white font-bold">X</button>
             </div>
-        </div>
-    </div>
-
-    <div id="adminDashboard" class="hidden fixed inset-0 bg-[#050505] z-[2000] p-6 overflow-y-auto">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-10">
-                <div>
-                    <h2 class="text-2xl font-black text-white italic uppercase">Guest <span class="text-green-500">Monitor</span></h2>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Biipsite.Art Management</p>
-                </div>
-                <button onclick="logout()" class="bg-red-600/10 text-red-500 border border-red-500/20 px-4 py-2 rounded-xl text-[10px] font-black uppercase">Logout</button>
-            </div>
-
-            <div class="glass rounded-3xl overflow-hidden shadow-2xl">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-white/5 border-b border-white/10 text-gray-400 uppercase font-black">
+            <div class="glass rounded-2xl overflow-hidden">
+                <table class="w-full text-left text-[11px]">
+                    <thead class="bg-white/5 text-gray-400 uppercase">
                         <tr>
-                            <th class="p-5">Waktu</th>
-                            <th class="p-5">Nama</th>
-                            <th class="p-5">Instansi</th>
-                            <th class="p-5">Tujuan</th>
-                            <th class="p-5">WhatsApp</th>
+                            <th class="p-4">Nama</th>
+                            <th class="p-4">Instansi</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="adminTableBody" class="divide-y divide-white/5 text-white">
@@ -83,107 +59,67 @@
     </div>
 
     <script>
-        // --- KONFIGURASI ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzdEsCdDF7S_H9_1hJmWveUfQqXNL1lTAduAadQhBA4tVbTZ0-y6Dt052FMvX7xGT3LDA/exec" // Ganti dengan URL Script Akang
-        const ADMIN_PASSWORD = "badarudin1010"; // GANTI PASSWORD AKANG DI SINI
+        // 1. PASTE URL WEB APP GOOGLE AKANG DI SINI
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyCsNMRWVRnTEdQ_sO_Ug96RV6uLHAiLpRlalXoM_lezCeSnUenCwtpod5PgmTfBey/exec";
 
-        const form = document.getElementById('guestForm');
-        const btnSubmit = document.getElementById('btnSubmit');
-
-        // FUNGSI KIRIM DATA TAMU
-        form.addEventListener('submit', e => {
+        // FUNGSI KIRIM DATA (TAMU)
+        document.getElementById('guestForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            btnSubmit.innerHTML = "Processing...";
-            btnSubmit.disabled = true;
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true; btn.innerText = "MENGIRIM...";
 
-            const formData = new FormData(form);
-            const obj = {};
-            formData.forEach((value, key) => obj[key] = value);
+            const data = {
+                nama: document.getElementById('nama').value,
+                instansi: document.getElementById('instansi').value,
+                tujuan: document.getElementById('tujuan').value,
+                whatsapp: document.getElementById('whatsapp').value
+            };
 
-            fetch(SCRIPT_URL, {
+            await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Menghindari masalah CORS di beberapa browser
-                body: JSON.stringify(obj)
-            })
-            .then(() => {
-                document.getElementById('guestForm').classList.add('hidden');
-                document.getElementById('successMsg').classList.remove('hidden');
-            })
-            .catch(err => {
-                alert("Error koneksi!");
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = "Kirim Data Kunjungan";
+                body: JSON.stringify(data)
             });
+
+            document.getElementById('guestForm').classList.add('hidden');
+            document.getElementById('successMsg').classList.remove('hidden');
         });
 
-        // FUNGSI ADMIN
-        function showLogin() { document.getElementById('loginModal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function checkAuth() {
-            const pass = document.getElementById('adminPass').value;
-            if (pass === ADMIN_PASSWORD) {
-                closeModal('loginModal');
-                loadAdminData();
-                document.getElementById('adminDashboard').classList.remove('hidden');
-            } else {
-                alert("Password Salah!");
+        // FUNGSI AMBIL DATA (ADMIN)
+        async function loadAdminData() {
+            const tbody = document.getElementById('adminTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center animate-pulse">Sedang mengambil data dari Google Sheets...</td></tr>';
+            
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const data = await res.json();
+                tbody.innerHTML = '';
+                
+                data.reverse().forEach(tamu => {
+                    const isDone = tamu.status === "TERLAYANI";
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-white/5 ${isDone ? 'opacity-30' : ''}">
+                            <td class="p-4 font-bold">${tamu.nama}</td>
+                            <td class="p-4">${tamu.instansi}</td>
+                            <td class="p-4"><span class="px-2 py-1 rounded-md ${isDone ? 'bg-gray-800' : 'bg-green-900 text-green-300'}">${tamu.status || 'MENUNGGU'}</span></td>
+                            <td class="p-4 text-right">
+                                ${!isDone ? `<button onclick="markDone('${tamu.nama}')" class="bg-white text-black px-3 py-1 rounded-md font-bold text-[9px]">SELESAI</button>` : '✅'}
+                            </td>
+                        </tr>`;
+                });
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-500">Gagal load data. Pastikan Deploy sudah "Anyone".</td></tr>';
             }
         }
 
-        function loadAdminData() {
-    const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vREkTMX1LapWfal_3a1omUjv0oxJcDlHpqhq_ILKkWq_YqP4Et2wit5P3GoGX_eIaWhK8f7i53lXJjh/pub?output=csv" // Pastikan link CSV benar
-
-    fetch(MANUAL_CSV + '?cachebuster=' + new Date().getTime()) // Anti-cache
-    .then(res => res.text())
-    .then(data => {
-        const rows = data.split('\n').slice(1);
-        const tableBody = document.getElementById('adminTableBody');
-        tableBody.innerHTML = '';
-
-        rows.reverse().forEach(row => {
-            const cols = row.split(',');
-            if(cols.length >= 5) {
-                const isDone = cols[5] && cols[5].trim() === "TERLAYANI";
-                
-                tableBody.innerHTML += `
-                    <tr class="hover:bg-white/5 transition ${isDone ? 'opacity-40' : ''}">
-                        <td class="p-5 text-[10px] text-gray-500 font-mono">${cols[0]}</td>
-                        <td class="p-5 font-bold">${cols[1]}</td>
-                        <td class="p-5">${cols[3]}</td>
-                        <td class="p-5">
-                            <span class="px-2 py-1 rounded text-[9px] font-black ${isDone ? 'bg-gray-700 text-gray-400' : 'bg-green-900 text-green-400 animate-pulse'}">
-                                ${isDone ? 'SELESAI' : 'ANTRE'}
-                            </span>
-                        </td>
-                        <td class="p-5 text-right">
-                            ${!isDone ? `<button onclick="markDone('${cols[1]}', '${cols[0]}')" class="bg-green-600 hover:bg-green-500 text-white text-[9px] font-black px-3 py-2 rounded-lg transition">TANDAI SELESAI</button>` : '✅'}
-                        </td>
-                    </tr>
-                `;
-            }
-        });
-    });
-}
-
-function markDone(nama, timestamp) {
-    if(!confirm("Tandai tamu ini sebagai 'Selesai Terlayani'?")) return;
-    
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({
-            action: "updateStatus",
-            nama: nama,
-            timestamp: timestamp
-        })
-    }).then(() => {
-        alert("Status diperbarui! Mohon tunggu 1-2 menit agar sinkronisasi Google Sheets selesai.");
-        loadAdminData();
-    });
-}        function logout() {
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('adminPass').value = '';
+        // FUNGSI TANDAI SELESAI
+        async function markDone(nama) {
+            if(!confirm("Tandai " + nama + " selesai?")) return;
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "updateStatus", nama: nama })
+            });
+            alert("Berhasil! Silahkan Refresh.");
+            loadAdminData();
         }
     </script>
 </body>
