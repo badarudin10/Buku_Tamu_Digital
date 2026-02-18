@@ -132,7 +132,7 @@
         }
 
         function loadAdminData() {
-    const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vREkTMX1LapWfal_3a1omUjv0oxJcDlHpqhq_ILKkWq_YqP4Et2wit5P3GoGX_eIaWhK8f7i53lXJjh/pub?output=csv"; // Pastikan link CSV benar
+    const MANUAL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vREkTMX1LapWfal_3a1omUjv0oxJcDlHpqhq_ILKkWq_YqP4Et2wit5P3GoGX_eIaWhK8f7i53lXJjh/pub?output=csv" // Pastikan link CSV benar
 
     fetch(MANUAL_CSV + '?cachebuster=' + new Date().getTime()) // Anti-cache
     .then(res => res.text())
